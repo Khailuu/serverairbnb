@@ -46,6 +46,7 @@ app.post("/payment", async (req, res) => {
     const orderGroupId = '';
     const autoCapture = true;
     const lang = 'vi';
+    const expireTime = new Date(new Date().getTime() + 15 * 60 * 1000).toISOString(); // 15 phút từ thời điểm hiện tại
 
     console.log(expireTime)
 
@@ -70,6 +71,7 @@ app.post("/payment", async (req, res) => {
         extraData: extraData,
         orderGroupId: orderGroupId,
         signature: signature,
+        expireTime: expireTime,
     });
 
     const options = {
