@@ -5,7 +5,6 @@ const crypto = require('crypto');
 
 const app = express();
 
-// Cấu hình CORS
 const corsOptions = {
     origin: 'https://airbnb-capstone.vercel.app',
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -17,24 +16,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.post("/payment", async (req, res) => {
-    const { amount, orderInfo, redirectUrl } = req.body;
-
-    // URL webhook mới từ Webhook.site
-    const ipnUrl = 'https://webhook.site/5254fac2-369f-4f25-b13b-0ad3a1f1e5e0';
-
-    // Kiểm tra đầu vào
-    if (!amount || !orderInfo || !redirectUrl || !ipnUrl) {
-        return res.status(400).json({
-            statusCode: 400,
-            messageError: "Invalid input",
-            errorDetails: {
-                amount: !amount ? "Amount is required" : undefined,
-                orderInfo: !orderInfo ? "Order information is required" : undefined,
-                redirectUrl: !redirectUrl ? "Redirect URL is required" : undefined,
-                ipnUrl: !ipnUrl ? "IPN URL is required" : undefined
-            }
-        });
-    }
+    const { amount, orderInfo, redirectUrl, ipnUrl } = req.body;
 
     const accessKey = 'F8BBA842ECF85';
     const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
@@ -47,7 +29,10 @@ app.post("/payment", async (req, res) => {
     const autoCapture = true;
     const lang = 'vi';
 
-    const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=${requestType}`;
+    // Thiết lập thời gian hết hạn (giả định là 15 phút từ thời điểm tạo giao dịch)
+    const expireTime = new Date(new Date().getTime() + 15 * 60000).toISOString(); // 15 phút
+
+    const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=${requestType}&expireTime=${expireTime}`;
     const signature = crypto.createHmac('sha256', secretKey)
         .update(rawSignature)
         .digest('hex');
@@ -67,7 +52,8 @@ app.post("/payment", async (req, res) => {
         autoCapture: autoCapture,
         extraData: extraData,
         orderGroupId: orderGroupId,
-        signature: signature
+        signature: signature,
+        expireTime: expireTime // Thêm thời gian hết hạn vào yêu cầu
     });
 
     const options = {
@@ -80,11 +66,9 @@ app.post("/payment", async (req, res) => {
         data: requestBody
     };
 
-    console.log('Request Body:', requestBody);
-
     try {
         const result = await axios(options);
-        console.log('Response:', result.data);
+        console.log(result);
         return res.status(200).json(result.data);
     } catch (err) {
         console.error('Error details:', err.response ? err.response.data : err.message);
