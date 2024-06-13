@@ -46,7 +46,9 @@ app.post("/payment", async (req, res) => {
     const orderGroupId = '';
     const autoCapture = true;
     const lang = 'vi';
-    const expireTime = new Date(new Date().getTime() + 15 * 60000).toISOString();
+    const expireTime = new Date(new Date().getTime() + 15 * 60 * 1000).toISOString(); // 15 phút từ thời điểm hiện tại
+
+    console.log(expireTime)
 
     const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=${requestType}`;
     const signature = crypto.createHmac('sha256', secretKey)
