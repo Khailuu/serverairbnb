@@ -63,9 +63,11 @@ app.post("/payment", async (req, res) => {
         data: requestBody
     };
 
+    console.log('Request Body:', requestBody);
+
     try {
         const result = await axios(options);
-        console.log(result)
+        console.log('Response:', result.data);
         return res.status(200).json(result.data);
     } catch (err) {
         console.error('Error details:', err.response ? err.response.data : err.message);
