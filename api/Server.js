@@ -19,6 +19,20 @@ app.use(express.json());
 app.post("/payment", async (req, res) => {
     const { amount, orderInfo, redirectUrl, ipnUrl } = req.body;
 
+    // Kiểm tra đầu vào
+    if (!amount || !orderInfo || !redirectUrl || !ipnUrl) {
+        return res.status(400).json({
+            statusCode: 400,
+            messageError: "Invalid input",
+            errorDetails: {
+                amount: !amount ? "Amount is required" : undefined,
+                orderInfo: !orderInfo ? "Order information is required" : undefined,
+                redirectUrl: !redirectUrl ? "Redirect URL is required" : undefined,
+                ipnUrl: !ipnUrl ? "IPN URL is required" : undefined
+            }
+        });
+    }
+
     const accessKey = 'F8BBA842ECF85';
     const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
     const partnerCode = 'MOMO';
