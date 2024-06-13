@@ -71,7 +71,7 @@ app.post("/payment", async (req, res) => {
 
     const options = {
         method: "POST",
-        url: "https://test-payment.momo.vn/v2/gateway/api/create",
+        url: "https://payment.momo.vn/v2/gateway/api/create",
         headers: {
             "Content-Type": "application/json",
             "Content-Length": Buffer.byteLength(requestBody)
