@@ -17,7 +17,10 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.post("/payment", async (req, res) => {
-    const { amount, orderInfo, redirectUrl, ipnUrl } = req.body;
+    const { amount, orderInfo, redirectUrl } = req.body;
+
+    // URL webhook mới từ Webhook.site
+    const ipnUrl = 'https://webhook.site/5254fac2-369f-4f25-b13b-0ad3a1f1e5e0';
 
     // Kiểm tra đầu vào
     if (!amount || !orderInfo || !redirectUrl || !ipnUrl) {
