@@ -69,11 +69,12 @@ app.post("/payment", async (req, res) => {
         extraData: extraData,
         orderGroupId: orderGroupId,
         signature: signature,
+        expireTime: expireTime,
     });
 
     const options = {
         method: "POST",
-        url: 'https://test-payment.momo.vn/v2/gateway/api/query',
+        url: "https://test-payment.momo.vn/v2/gateway/api/create",
         headers: {
             "Content-Type": "application/json",
             "Content-Length": Buffer.byteLength(requestBody)
