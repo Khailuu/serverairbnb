@@ -47,6 +47,7 @@ app.post("/payment", async (req, res) => {
     const autoCapture = true;
     const lang = 'vi';
 
+    console.log(expireTime)
 
     const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=${requestType}`;
     const signature = crypto.createHmac('sha256', secretKey)
@@ -73,7 +74,7 @@ app.post("/payment", async (req, res) => {
 
     const options = {
         method: "POST",
-        url: "https://test-payment.momo.vn/v2/gateway/api/query",
+        url: "https://test-payment.momo.vn/v2/gateway/api/create",
         headers: {
             "Content-Type": "application/json",
             "Content-Length": Buffer.byteLength(requestBody)
